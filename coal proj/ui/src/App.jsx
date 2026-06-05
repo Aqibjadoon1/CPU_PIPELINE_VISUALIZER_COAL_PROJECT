@@ -22,7 +22,7 @@ export default function App() {
   const [forwardingEnabled, setForwardingEnabled] = useState(false);
 
   const { state, dispatch, onMessage } = usePipelineState();
-  const { connected, send } = useWebSocket(onMessage);
+  const { connected, send, transport } = useWebSocket(onMessage);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -57,7 +57,8 @@ export default function App() {
   const handleToggleForwarding = useCallback((enabled) => {
     setForwardingEnabled(enabled);
     dispatch({ type: 'set_forwarding', enabled });
-  }, [dispatch]);
+    send({ type: 'set_forwarding', enabled });
+  }, [dispatch, send]);
 
   const handleExport = useCallback(() => {
     const data = {
@@ -98,9 +99,13 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             {connected ? (
-              <span className="flex items-center gap-1.5 text-xs text-green-400 font-mono">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                CONNECTED
+              <span className={`flex items-center gap-1.5 text-xs font-mono ${
+                transport === 'browser' ? 'text-blue-400' : 'text-green-400'
+              }`}>
+                <span className={`w-2 h-2 rounded-full animate-pulse ${
+                  transport === 'browser' ? 'bg-blue-400' : 'bg-green-400'
+                }`} />
+                {transport === 'browser' ? 'BROWSER DEMO' : 'CONNECTED'}
               </span>
             ) : (
               <span className="flex items-center gap-1.5 text-xs text-red-accent font-mono">
