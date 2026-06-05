@@ -1,0 +1,2 @@
+[bridge] WebSocket on ws://localhost:3001
+[bridge] HTTP serving on http://localhost:3000
